@@ -78,6 +78,7 @@ def train(
         device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
         gradient_accumulation_steps = gradient_accumulation_steps // world_size
 
+    device_map = {'': 0}
     model = LlamaForCausalLM.from_pretrained(
         base_model,
         load_in_8bit=True,
@@ -133,6 +134,7 @@ def train(
         model,
         LORA_WEIGHTS,
         torch_dtype=torch.float16,
+        device_map=device_map,
     )
 
     data = load_dataset("json", data_files=data_path)
