@@ -1,3 +1,11 @@
+from peft import (
+    prepare_model_for_int8_training,
+    PeftModel,
+    get_peft_model,
+    get_peft_model_state_dict,
+    set_peft_model_state_dict,
+)
+from transformers import LlamaForCausalLM, LlamaTokenizer
 import os
 import sys
 from typing import List
@@ -12,14 +20,6 @@ import transformers
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
-from transformers import LlamaForCausalLM, LlamaTokenizer
-from peft import (
-    prepare_model_for_int8_training,
-    PeftModel,
-    get_peft_model,
-    get_peft_model_state_dict,
-    set_peft_model_state_dict,
-)
 
 
 def train(
@@ -44,10 +44,9 @@ def train(
         ],
         # llm hyperparams
         train_on_inputs: bool = True,  # if False, masks out inputs in loss
-        group_by_length:
-    bool = False,  # faster, but produces an odd training loss curve,
-        resume_from_checkpoint:
-    str = None,  # either training checkpoint or final adapter
+        group_by_length: bool = False,  # faster, but produces an odd training loss curve,
+        # either training checkpoint or final adapter
+        resume_from_checkpoint: str = None,
 ):
     print(f"Training Alpaca-LoRA model with params:\n"
           f"base_model: {base_model}\n"
